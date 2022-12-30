@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-TASKS:list[dict[str, str]] = [
+TASKS: list[dict[str, str]] = [
     {
         "id": "1",
         "titulo": "fazer compras",
@@ -22,6 +22,7 @@ TASKS:list[dict[str, str]] = [
         "estado": "não finalizado",
     },
 ]
+
 
 @app.get("/tasks")
 def list_tasks():
