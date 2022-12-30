@@ -1,6 +1,6 @@
 .PHONY: all prod dev format test lint type
 
-all: format tests lint type
+all: format test lint type
 
 prod:
 	@poetry install --without tests, docs
@@ -13,7 +13,7 @@ format:
 	@isort .
 
 test:
-	@pytest .
+	@pytest -v .
 
 lint:
-	@flake8 .
+	@flake8 --exclude=.venv .
