@@ -7,21 +7,21 @@ from task_manager.main import app
 
 def test_list_task_must_return_200_status_code():
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("tasks/tasks")
 
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_list_task_format_must_return_a_json():
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert response.headers["Content-type"] == "application/json"
 
 
 def test_list_task_must_return_a_list():
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert isinstance(response.json(), list)
 
@@ -37,7 +37,7 @@ def test_list_task_return_must_has_id():
     )
 
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert "id" in response.json().pop()
 
@@ -55,7 +55,7 @@ def test_list_task_return_must_has_title():
     )
 
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert "title" in response.json().pop()
 
@@ -73,7 +73,7 @@ def test_list_task_return_must_has_description():
     )
 
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert "description" in response.json().pop()
 
@@ -91,7 +91,7 @@ def test_list_task_return_must_has_status():
     )
 
     client = TestClient(app)
-    response = client.get("/tasks")
+    response = client.get("/tasks/tasks")
 
     assert "status" in response.json().pop()
 
@@ -100,32 +100,32 @@ def test_list_task_return_must_has_status():
 
 def test_tasks_must_accept_post():
     client = TestClient(app)
-    response = client.post("/tasks")
+    response = client.post("/tasks/tasks")
 
     assert response.status_code != status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 def test_post_task_must_have_a_title():
     client = TestClient(app)
-    response = client.post("/tasks")
+    response = client.post("/tasks/tasks")
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_title_must_contain_between_3_50_characters():
     client = TestClient(app)
-    response = client.post("/tasks", json={"title": 2 * "*"})
+    response = client.post("/tasks/tasks", json={"title": 2 * "*"})
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response = client.post("/tasks", json={"title": 51 * "*"})
+    response = client.post("/tasks/tasks", json={"title": 51 * "*"})
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_post_task_must_have_a_description():
     client = TestClient(app)
-    response = client.post("/tasks", json={"title": "A title"})
+    response = client.post("/tasks/tasks", json={"title": "A title"})
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
@@ -133,7 +133,7 @@ def test_post_task_must_have_a_description():
 def test_description_must_max_length_of_140_characters():
     client = TestClient(app)
     response = client.post(
-        "/tasks", json={"title": "A title", "description": 141 * "*"}
+        "/tasks/tasks", json={"title": "A title", "description": 141 * "*"}
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -143,7 +143,7 @@ def test_post_task_must_be_returned():
     task_expected = {"title": "A title", "description": "A description"}
 
     client = TestClient(app)
-    response = client.post("tasks", json=task_expected)
+    response = client.post("tasks/tasks", json=task_expected)
 
     task_received = response.json()
 
@@ -158,8 +158,8 @@ def test_post_task_must_be_a_unique_id():
     task_2 = {"title": "Second title", "description": "Second description"}
 
     client = TestClient(app)
-    response_1 = client.post("tasks", json=task_1)
-    response_2 = client.post("tasks", json=task_2)
+    response_1 = client.post("tasks/tasks", json=task_1)
+    response_2 = client.post("tasks/tasks", json=task_2)
 
     assert response_1.json()["id"] != response_2.json()["id"]
 
@@ -170,7 +170,7 @@ def test_post_task_must_be_not_finalized_without_input():
     task = {"title": "A title", "description": "A description"}
 
     client = TestClient(app)
-    response = client.post("tasks", json=task)
+    response = client.post("tasks/tasks", json=task)
 
     assert response.json()["status"] == "Not finalized"
 
@@ -181,7 +181,7 @@ def test_post_task_must_return_201_status_code():
     task = {"title": "A title", "description": "A description"}
 
     client = TestClient(app)
-    response = client.post("tasks", json=task)
+    response = client.post("tasks/tasks", json=task)
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -192,7 +192,7 @@ def test_post_task_must_persists():
     task = {"title": "A title", "description": "A description"}
 
     client = TestClient(app)
-    client.post("tasks", json=task)
+    client.post("tasks/tasks", json=task)
 
     assert len(TASKS) == 1
 
