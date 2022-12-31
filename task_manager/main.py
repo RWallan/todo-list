@@ -4,4 +4,4 @@ from task_manager.app import api_router
 
 app = FastAPI(title="Task Manager")
 
-app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router)

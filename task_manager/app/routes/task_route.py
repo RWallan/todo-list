@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, status
 
-import task_manager.app.models.tasks as task_models
+import task_manager.app.models.tasks_models as task_models
 
 router = APIRouter()
 
