@@ -21,3 +21,22 @@ def test_insert_new_task_must_return_the_title_description_and_id():
         "status",
         "id",
     ]
+
+
+def test_filter_task_by_id_must_return_unique_test_with_id_searched():
+    new_task1 = InputTask(
+        **{"title": "First title", "description": "First description"}
+    )
+
+    new_task2 = InputTask(
+        **{"title": "Second title", "description": "Second description"}
+    )
+
+    tasks = Task()
+
+    task_added1 = tasks.add_task(new_task1)
+    tasks.add_task(new_task2)
+
+    task_filtered = tasks.filter_task_by_id(task_added1["id"])
+
+    assert task_filtered == task_added1

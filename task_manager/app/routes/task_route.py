@@ -19,3 +19,12 @@ def list_tasks() -> list[task_models.OutputTask]:
 )
 def create_tasks(task: task_models.InputTask) -> task_models.OutputTask:
     return tasks.add_task(task)
+
+
+@router.get(
+    "/tasks/{id}",
+    response_model=task_models.OutputTask,
+    status_code=status.HTTP_200_OK,
+)
+def filter_task_by_id(id: str):
+    return tasks.filter_task_by_id(id)

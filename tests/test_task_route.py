@@ -186,3 +186,22 @@ def test_post_task_must_persists():
     all_tasks = tasks.list_tasks()
 
     assert len(all_tasks) != 0
+
+
+def test_filtered_task_by_id_return_one_task_with_specific_id_of_all_tasks():
+    new_task = InputTask(
+        **{
+            "title": "Test title",
+            "description": "Test description",
+            "status": "Finalized",
+        }
+    )
+
+    expected_task = tasks.add_task(new_task)
+
+    assert len(tasks.list_tasks()) > 1
+
+    client = TestClient(app)
+    response = client.get(f"tasks/tasks/{expected_task['id']}")
+
+    assert response.json() == expected_task

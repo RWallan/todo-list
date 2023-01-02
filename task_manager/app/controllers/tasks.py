@@ -20,3 +20,10 @@ class Task:
         self.tasks.append(task)
 
         return task
+
+    def filter_task_by_id(self, id: str) -> OutputTask:
+        _filtered_task = filter(lambda task: task["id"] == id, self.tasks)
+
+        filtered_task = list(_filtered_task)[0]
+
+        return filtered_task
