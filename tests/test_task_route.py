@@ -1,7 +1,8 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from task_manager.app.models.tasks_models import TASKS
+from task_manager.app.models.tasks_models import InputTask
+from task_manager.app.routes.task_route import tasks
 from task_manager.main import app
 
 
@@ -19,7 +20,7 @@ def test_list_task_format_must_return_a_json():
     assert response.headers["Content-type"] == "application/json"
 
 
-def test_list_task_must_return_a_list():
+def test_list_task_must_return_a_list_of_dict():
     client = TestClient(app)
     response = client.get("/tasks/tasks")
 
@@ -27,75 +28,71 @@ def test_list_task_must_return_a_list():
 
 
 def test_list_task_return_must_has_id():
-    TASKS.append(
-        {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    new_task = InputTask(
+        **{
             "title": "title 1",
             "description": "description 1",
-            "status": "finalizado",
+            "status": "Finalized",
         }
     )
+
+    tasks.add_task(new_task)
 
     client = TestClient(app)
     response = client.get("/tasks/tasks")
 
     assert "id" in response.json().pop()
 
-    TASKS.clear()
-
 
 def test_list_task_return_must_has_title():
-    TASKS.append(
-        {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    new_task = InputTask(
+        **{
             "title": "title 1",
             "description": "description 1",
-            "status": "finalizado",
+            "status": "Finalized",
         }
     )
+
+    tasks.add_task(new_task)
 
     client = TestClient(app)
     response = client.get("/tasks/tasks")
 
     assert "title" in response.json().pop()
 
-    TASKS.clear()
-
 
 def test_list_task_return_must_has_description():
-    TASKS.append(
-        {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    new_task = InputTask(
+        **{
             "title": "title 1",
             "description": "description 1",
-            "status": "finalizado",
+            "status": "Finalized",
         }
     )
+
+    tasks.add_task(new_task)
 
     client = TestClient(app)
     response = client.get("/tasks/tasks")
 
     assert "description" in response.json().pop()
 
-    TASKS.clear()
-
 
 def test_list_task_return_must_has_status():
-    TASKS.append(
-        {
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    new_task = InputTask(
+        **{
             "title": "title 1",
             "description": "description 1",
-            "status": "finalizado",
+            "status": "Finalized",
         }
     )
+
+    tasks.add_task(new_task)
 
     client = TestClient(app)
     response = client.get("/tasks/tasks")
 
     assert "status" in response.json().pop()
-
-    TASKS.clear()
 
 
 def test_tasks_must_accept_post():
@@ -150,8 +147,6 @@ def test_post_task_must_be_returned():
     assert task_received["title"] == task_expected["title"]
     assert task_received["description"] == task_expected["description"]
 
-    TASKS.clear()
-
 
 def test_post_task_must_be_a_unique_id():
     task_1 = {"title": "First title", "description": "First description"}
@@ -163,8 +158,6 @@ def test_post_task_must_be_a_unique_id():
 
     assert response_1.json()["id"] != response_2.json()["id"]
 
-    TASKS.clear()
-
 
 def test_post_task_must_be_not_finalized_without_input():
     task = {"title": "A title", "description": "A description"}
@@ -173,8 +166,6 @@ def test_post_task_must_be_not_finalized_without_input():
     response = client.post("tasks/tasks", json=task)
 
     assert response.json()["status"] == "Not finalized"
-
-    TASKS.clear()
 
 
 def test_post_task_must_return_201_status_code():
@@ -185,8 +176,6 @@ def test_post_task_must_return_201_status_code():
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    TASKS.clear()
-
 
 def test_post_task_must_persists():
     task = {"title": "A title", "description": "A description"}
@@ -194,6 +183,6 @@ def test_post_task_must_persists():
     client = TestClient(app)
     client.post("tasks/tasks", json=task)
 
-    assert len(TASKS) == 1
+    all_tasks = tasks.list_tasks()
 
-    TASKS.clear()
+    assert len(all_tasks) != 0

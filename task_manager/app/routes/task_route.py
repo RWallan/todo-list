@@ -1,15 +1,15 @@
-from uuid import uuid4
-
 from fastapi import APIRouter, status
 
 import task_manager.app.models.tasks_models as task_models
+from task_manager.app.controllers.tasks import Task
 
 router = APIRouter()
+tasks = Task()
 
 
 @router.get("/tasks")
-def list_tasks():
-    return task_models.TASKS
+def list_tasks() -> list[task_models.OutputTask]:
+    return tasks.list_tasks()
 
 
 @router.post(
@@ -17,9 +17,5 @@ def list_tasks():
     response_model=task_models.OutputTask,
     status_code=status.HTTP_201_CREATED,
 )
-def create_tasks(task: task_models.InputTask):
-    new_task = task.dict()
-    new_task.update({"id": uuid4()})
-    task_models.TASKS.append(new_task)
-
-    return new_task
+def create_tasks(task: task_models.InputTask) -> task_models.OutputTask:
+    return tasks.add_task(task)
