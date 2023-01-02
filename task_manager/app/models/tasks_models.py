@@ -1,5 +1,4 @@
 from enum import Enum
-from uuid import UUID
 
 from pydantic import BaseModel, ConstrainedStr
 
@@ -27,4 +26,4 @@ class InputTask(BaseModel):
 
 
 class OutputTask(InputTask):
-    id: UUID
+    id: str
